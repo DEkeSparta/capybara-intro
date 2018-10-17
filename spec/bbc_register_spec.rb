@@ -1,10 +1,4 @@
 describe BBCSite do
-  before :all do
-    # VALID_EMAIL = "email@example.com"
-    VALID_EMAIL = "yojso@chineese.com"
-    INVALID_EMAIL = "not@valid.email"
-    PASSWORD = "1qaz2wsx3edc4rfv"
-  end
 
   context "sign up page" do
 
@@ -29,17 +23,28 @@ describe BBCSite do
 
     it "should continue when inputting a valid age" do
       @bbc_page.input_DOB 10, 5, 1987
-      expect(@bbc_page.find_username).to have_css "#user-identifier-input"
+      expect(@bbc_page.find_username?).to be true
     end
 
     context "on the form page" do
 
-      before :each do
-        @bbc_page.input_DOB 10, 5, 1987
+      before :each do |test|
+        @bbc_page.input_DOB 10, 5, 1987 unless test.metadata[:on_same_page]
       end
 
-      it "should give 5 errors when submitting nothing" do
-        true
+      it "should give 5 errors when submitting nothing", :on_same_page do
+        @bbc_page.click_register
+        expect(@bbc_page.find_error_box_ids.length).to eq 5
+      end
+
+      it "should give 1 email error when submitting everything with a used email" do
+        @bbc_page.input_username "com@com.com"
+        @bbc_page.input_password "1qaz2wsx3edc"
+        @bbc_page.input_postcode "SW1A2AA"
+        @bbc_page.select_gender "prefer not to say"
+        @bbc_page.click_opt_out
+        @bbc_page.click_register
+        expect(@bbc_page.find_error_box_ids).to include "form-message-email"
       end
 
     end

@@ -2,13 +2,20 @@ require "capybara"
 
 class BBCSignUpPage
   SIGN_UP_URL = "https://account.bbc.com/register"
+
   USERNAME_ID = "user-identifier-input"
   PASSWORD_ID = "password-input"
+  POSTCODE_ID = "postcode-input"
+  GENDER_ID = "#gender-input"
+  NO_BUTTON_ID = "label[for=\"optOut\"]"
   SUBMIT_ID   = "#submit-button"
+
   ERROR_CLASS = ".form-message--error"
+
   DAY_FIELD_ID = "day-input"
   MONTH_FIELD_ID = "month-input"
   YEAR_FIELD_ID = "year-input"
+
   DOB_SUBMIT_ID = "#submit-button"
 
   def initialize
@@ -33,8 +40,11 @@ class BBCSignUpPage
     @session.find(DOB_SUBMIT_ID).click
   end
 
-  def find_username
-    @session.find("#"+USERNAME_ID)
+  def find_username?
+    if @session.find("#"+USERNAME_ID)
+      return true
+    end
+    return false
   end
 
   def input_username username
@@ -45,7 +55,19 @@ class BBCSignUpPage
     @session.fill_in(PASSWORD_ID, with: password)
   end
 
-  def click_sign_in
+  def input_postcode postcode
+    @session.fill_in(POSTCODE_ID, with: postcode)
+  end
+
+  def select_gender gender
+    @session.find(GENDER_ID).find("option[value=\"#{gender}\"]").select_option
+  end
+
+  def click_opt_out
+    @session.find(NO_BUTTON_ID).click
+  end
+
+  def click_register
     @session.find(SUBMIT_ID).click
   end
 
