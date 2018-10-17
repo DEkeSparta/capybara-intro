@@ -8,7 +8,7 @@ describe BBCSite do
 
     before :each do |test|
       @bbc_page.visit_sign_up_page unless test.metadata[:on_same_page]
-      @bbc_page.click_over_thirteen
+      @bbc_page.click_over_thirteen unless test.metadata[:on_same_page]
     end
 
     it "should bring up an error when selecting an age under 13" do
